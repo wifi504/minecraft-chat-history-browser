@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    com.lhl.minecraft_chat: warn

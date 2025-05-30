@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: chat-history
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
