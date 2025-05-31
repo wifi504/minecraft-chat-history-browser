@@ -4,3 +4,11 @@ server:
 logging:
   level:
     com.lhl.minecraft_chat: warn
+
+cors:
+  # 允许哪些源访问
+  allowed-origins: http://localhost:5173/, http://localhost:4173/
+
+# 日志文件路径
+log-file:
+  path: D:/logs

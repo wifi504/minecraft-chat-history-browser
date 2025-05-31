@@ -1,6 +1,11 @@
 package com.lhl.minecraft_chat.backend.service;
 
+import com.lhl.minecraft_chat.backend.bean.Message;
+import com.lhl.minecraft_chat.backend.service.exception.ChatHistoryServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * @author WIFI连接超时
@@ -10,5 +15,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ChatHistoryService {
 
-
+    List<Message> resolveLogFiles(List<MultipartFile> files) throws ChatHistoryServiceException;
 }
