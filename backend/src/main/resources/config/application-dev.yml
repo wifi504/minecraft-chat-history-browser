@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 25566
 
 logging:
   level:
@@ -9,6 +9,9 @@ cors:
   # 允许哪些源访问
   allowed-origins: http://localhost:5173/, http://localhost:4173/
 
-# 日志文件路径
+# 日志文件
 log-file:
+  # 路径
   path: D:/logs
+  # 返回哪些类型日志，可选：PLAYER-CHAT-MSG, PLAYER-LOGINOUT-MSG, RAW-INFO-LOG, RAW-WARN-LOG
+  filter: PLAYER-CHAT-MSG, PLAYER-LOGINOUT-MSG

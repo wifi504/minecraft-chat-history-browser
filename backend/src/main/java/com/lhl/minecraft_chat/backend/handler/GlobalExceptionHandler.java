@@ -2,6 +2,7 @@ package com.lhl.minecraft_chat.backend.handler;
 
 import com.lhl.minecraft_chat.backend.result.R;
 import com.lhl.minecraft_chat.backend.result.ResultCode;
+import com.lhl.minecraft_chat.backend.service.exception.ServiceException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +16,12 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    // 服务异常
+    @ExceptionHandler(ServiceException.class)
+    public R<?> handleServiceException(ServiceException e) {
+        return R.error(ResultCode.SERVER_ERROR, "服务异常：" + e.getMessage());
+    }
 
     // 处理请求方法异常
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

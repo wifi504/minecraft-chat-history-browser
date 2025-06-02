@@ -1,5 +1,6 @@
 package com.lhl.minecraft_chat.backend.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lhl.minecraft_chat.backend.dto.MojangUserProfileDto;
 
@@ -10,15 +11,13 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
-import java.util.Base64;
+import java.util.HashMap;
 
 /**
  * 根据玩家名称生成玩家头像 Base64
@@ -29,30 +28,36 @@ import java.util.Base64;
  */
 public class PlayerAvatarGenerator {
 
+    // 玩家头像缓存
+    public static HashMap<String, BufferedImage> cache = new HashMap<>();
+
     /**
      * 生成玩家头像
      *
      * @param playerName 玩家名字
      * @param size       头像大小
-     * @return Base64
+     * @return BufferedImage
      */
-    public static String generate(String playerName, int size) {
+    public static BufferedImage generate(String playerName, int size) {
         try {
-            // 1. 从麻将官方解析玩家UUID
-            String playerUUID = getPlayerUUIDFromMojang(playerName);
-            // 2. 从 crafatar.com 下载玩家皮肤
-            byte[] skinImage = downloadSkinFromCrafatar(playerUUID);
-            // 3. 将皮肤裁剪拼接成新头像
-            BufferedImage avatar = generateHead(ImageIO.read(new ByteArrayInputStream(skinImage)));
+            BufferedImage avatar;
+            if (cache.get(playerName) == null) {
+                // 1. 从麻将官方解析玩家UUID
+                String playerUUID = getPlayerUUIDFromMojang(playerName);
+                if (playerUUID == null) return null;
+                // 2. 从 crafatar.com 下载玩家皮肤
+                byte[] skinImage = downloadSkinFromCrafatar(playerUUID);
+                // 3. 将皮肤裁剪拼接成新头像
+                avatar = generateHead(ImageIO.read(new ByteArrayInputStream(skinImage)));
+                cache.put(playerName, avatar);
+            } else {
+                // 从缓存吃头像
+                avatar = cache.get(playerName);
+            }
             // 4. 缩放
             avatar = resize(avatar, size, size);
-            // 5. 将头像转为 Base64
-            // ImageIO.write(avatar, "png", new File("avatar.png"));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(avatar, "png", baos);
-            byte[] avatarBytes = baos.toByteArray();
-            baos.close();
-            return Base64.getEncoder().encodeToString(avatarBytes);
+            // 5. 将头像返回
+            return avatar;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -73,8 +78,12 @@ public class PlayerAvatarGenerator {
                 .GET()
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        MojangUserProfileDto userProfile = new ObjectMapper().readValue(response.body(), MojangUserProfileDto.class);
-        return userProfile.getId();
+        try {
+            MojangUserProfileDto userProfile = new ObjectMapper().readValue(response.body(), MojangUserProfileDto.class);
+            return userProfile.getId();
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 
 

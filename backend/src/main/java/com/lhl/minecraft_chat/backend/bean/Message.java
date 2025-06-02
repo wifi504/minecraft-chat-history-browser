@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * 消息实体类
+ * 日志消息实体类
  *
  * @author WIFI连接超时
  * @version 1.0
@@ -13,8 +13,8 @@ import lombok.Data;
 @Data
 @Builder
 public class Message {
+    private Long timestamp;
+    private String type;
     private String username;
     private String content;
-    private Long timestamp;
-    private String playerUUID;
 }
