@@ -3,12 +3,12 @@ import axios from 'axios'
 // 封装 HTTP Request 请求
 
 // 开发模式自动控制台输出所有请求对象
-const dev = true
+const dev = false
 
 // 创建 Axios 实例
 const instance = axios.create({
-  baseURL: 'http://localhost:8080/api', // 配置后端接口前缀
-  timeout: 5000 // 超时时间
+  baseURL: 'http://localhost:25566/api', // 配置后端接口前缀
+  timeout: 10000 // 超时时间
 })
 
 // 请求拦截器
